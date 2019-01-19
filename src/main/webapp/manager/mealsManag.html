@@ -1,0 +1,288 @@
+<!-- widget grid -->
+<section id="widget-grid" class="">
+
+	<!-- row -->
+	<div class="row">
+
+		<!-- NEW WIDGET START -->
+		<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+			<!-- Widget ID (each widget will need unique ID)-->
+			<div class="jarviswidget jarviswidget-color-blueDark" id="wid-id-1" data-widget-editbutton="false">
+				<!-- widget options:
+				usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
+
+				data-widget-colorbutton="false"
+				data-widget-editbutton="false"
+				data-widget-togglebutton="false"
+				data-widget-deletebutton="false"
+				data-widget-fullscreenbutton="false"
+				data-widget-custombutton="false"
+				data-widget-collapsed="true"
+				data-widget-sortable="false"
+
+				-->
+				<header>
+					<span class="widget-icon"> <i class="fa fa-table"></i> </span>
+					<h2>菜品列表 </h2>
+				</header>
+
+				<!-- widget div-->
+				<div>
+
+					<!-- widget edit box -->
+					<div class="jarviswidget-editbox">
+						<!-- This area used as dropdown edit box -->
+
+					</div>
+					<!-- end widget edit box -->
+
+					<!-- widget content -->
+					<div class="widget-body no-padding">
+
+						<table id="datatable_fixed_column" class="table table-striped table-bordered" width="100%">
+
+					        <thead>
+								<tr>
+
+									<th class="hasinput" style="width:17%">
+										<input type="text" class="form-control" placeholder="名称" />
+									</th>
+									<th class="hasinput" style="width:20%">
+										<input type="text" class="form-control" placeholder="菜系" />
+									</th>
+									<th class="hasinput">
+									</th>
+									<th class="hasinput" style="width:20%">
+										<input type="text" class="form-control" placeholder="口味" />
+									</th>
+									<th class="hasinput" style="width:16%">
+										<input type="text" class="form-control" placeholder="价格" />
+									</th>
+									<th class="hasinput">
+									</th>
+								</tr>
+					            <tr>
+				                    <th data-class="expand">序号</th>
+				                    <th data-class="expand">名称</th>
+				                    <th data-class="expand">图片</th>
+				                    <th>菜系</th>
+									<th data-hide="phone">口味</th>
+									<th data-hide="phone">价格</th>
+									<th data-hide="phone,tablet">操作</th>
+					            </tr>
+					        </thead>
+
+					
+						</table>
+
+					</div>
+					<!-- end widget content -->
+
+				</div>
+				<!-- end widget div -->
+
+			</div>
+			<!-- end widget -->
+
+		</article>
+		<!-- WIDGET END -->
+
+	</div>
+
+	<!-- end row -->
+
+	<!-- end row -->
+
+</section>
+<!-- end widget grid -->
+
+<!--定义操作列按钮模板-->
+<!--说下这里使用模板的作用，除了显示和数据分离好维护以外，绑定事件和传值也比较方便，希望大家能不拼接html则不拼接-->
+<script id="tpl" type="text/x-handlebars-template">
+	{{#each func}}
+	<button type="button" class="btn btn-{{this.type}} btn-xs" onclick="{{this.fn}}">{{this.name}}</button>
+	{{/each}}
+</script>
+
+<script type="text/javascript">
+
+	/* DO NOT REMOVE : GLOBAL FUNCTIONS!
+	 *
+	 * pageSetUp(); WILL CALL THE FOLLOWING FUNCTIONS
+	 *
+	 * // activate tooltips
+	 * $("[rel=tooltip]").tooltip();
+	 *
+	 * // activate popovers
+	 * $("[rel=popover]").popover();
+	 *
+	 * // activate popovers with hover states
+	 * $("[rel=popover-hover]").popover({ trigger: "hover" });
+	 *
+	 * // activate inline charts
+	 * runAllCharts();
+	 *
+	 * // setup widgets
+	 * setup_widgets_desktop();
+	 *
+	 * // run form elements
+	 * runAllForms();
+	 *
+	 ********************************
+	 *
+	 * pageSetUp() is needed whenever you load a page.
+	 * It initializes and checks for all basic elements of the page
+	 * and makes rendering easier.
+	 *
+	 */
+
+	pageSetUp();
+	
+	/*
+	 * ALL PAGE RELATED SCRIPTS CAN GO BELOW HERE
+	 * eg alert("my home function");
+	 * 
+	 * var pagefunction = function() {
+	 *   ...
+	 * }
+	 * loadScript("js/plugin/_PLUGIN_NAME_.js", pagefunction);
+	 * 
+	 */
+	
+	// PAGE RELATED SCRIPTS
+	
+	// pagefunction	
+	var pagefunction = function() {
+		//console.log("cleared");
+		
+		/* // DOM Position key index //
+		
+			l - Length changing (dropdown)
+			f - Filtering input (search)
+			t - The Table! (datatable)
+			i - Information (records)
+			p - Pagination (paging)
+			r - pRocessing 
+			< and > - div elements
+			<"#id" and > - div with an id
+			<"class" and > - div with a class
+			<"#id.class" and > - div with an id and class
+			
+			Also see: http://legacy.datatables.net/usage/features
+		*/
+
+        var tpl = $("#tpl").html();
+        //预编译模板
+        var template = Handlebars.compile(tpl);
+
+			var responsiveHelper_datatable_fixed_column = undefined;
+
+			var breakpointDefinition = {
+				tablet : 1024,
+				phone : 480
+			};
+
+		
+		/* COLUMN FILTER  */
+	    var otable = $('#datatable_fixed_column').DataTable({
+	    	//"bFilter": false,
+	    	//"bInfo": false,
+	    	//"bLengthChange": false
+	    	//"bAutoWidth": false,
+	    	//"bPaginate": false,
+	    	//"bStateSave": true // saves sort state using localStorage
+            ajax: {
+                type: 'GET',
+                url: "business/mealsList",
+                dataType: "json",
+                cache: false,
+                data:{}
+            },
+            serverSide: false,
+            processing: false,//服务器加载数据等待提示,
+            "order": [[1, 'asc']],// dt默认是第一列升序排列 这里第一列为序号列，所以设置为不排序，并把默认的排序列设置到后面
+            // order :false,
+            "columns": [
+                {"data": "id"},
+                {"data": "name"},
+                {
+                    "data": "image",
+                    "render": function (val) {
+                        return '<img src="'+val+'" width="100" height="100">';
+                    }
+                },
+                {"data": "species"},
+                {"data": "taste"},
+                {"data": "price"},
+            ],
+            "columnDefs": [
+                {
+                    "targets": 6,
+                    "render": function (a, b, c, d) {
+                        var context =
+                            {
+                                func: [
+                                    {"name": "修改", "fn": "edit('" + c.id + "','" + c.scopeName + "','" + c.scopeDescription + "','" + c.scopeKey + "','" + c.scopeStatus + "','" + c.createAt + "','" + c.createBy + "')", "type": "primary"},
+                                    { "name":c.scopeStatus=='1'?'停用':'启用',"fn": c.scopeStatus=='t'?"toDisabled('" + c.id + "')":"toEnabled('" + c.id + "')", "type":c.scopeStatus=='t'?"danger":"success"},
+                                ]
+                            };
+                        var html = template(context);
+                        return html;
+                    }
+                }
+            ],
+			"sDom": "<'dt-toolbar'<'col-xs-12 col-sm-6 hidden-xs'f><'col-sm-6 col-xs-12 hidden-xs'<'toolbar'>>r>"+
+					"t"+
+					"<'dt-toolbar-footer'<'col-sm-6 col-xs-12 hidden-xs'i><'col-xs-12 col-sm-6'p>>",
+			"oLanguage": {
+				"sSearch": '<span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>'
+			},
+			"autoWidth" : true,
+
+			"preDrawCallback" : function() {
+				// Initialize the responsive datatables helper once.
+				if (!responsiveHelper_datatable_fixed_column) {
+					responsiveHelper_datatable_fixed_column = new ResponsiveDatatablesHelper($('#datatable_fixed_column'), breakpointDefinition);
+				}
+			},
+			"rowCallback" : function(nRow) {
+				responsiveHelper_datatable_fixed_column.createExpandIcon(nRow);
+			},
+			"drawCallback" : function(oSettings) {
+				responsiveHelper_datatable_fixed_column.respond();
+			}		
+		
+	    });
+	    
+	    // custom toolbar
+	    $("div.toolbar").html('<div class="text-right"><img src="img/logo.png" alt="SmartAdmin" style="width: 111px; margin-top: 3px; margin-right: 10px;"></div>');
+	    	   
+	    // Apply the filter
+	    $("#datatable_fixed_column thead th input[type=text]").on( 'keyup change', function () {
+	    	
+	        otable
+	            .column( $(this).parent().index()+':visible' )
+	            .search( this.value )
+	            .draw();
+	            
+	    } );
+	    /* END COLUMN FILTER */   
+
+	};
+
+    // load related plugins
+    loadScript("js/plugin/datatables/jquery.dataTables.min.js", function(){
+        loadScript("js/plugin/datatables/dataTables.colVis.min.js", function(){
+            loadScript("js/plugin/datatables/dataTables.tableTools.min.js", function(){
+                loadScript("js/plugin/datatables/dataTables.bootstrap.min.js", function(){
+                    loadScript("js/template/handlebars-v3.0.1.js", function(){
+                        loadScript("js/plugin/datatable-responsive/datatables.responsive.min.js", pagefunction)
+                    });
+                });
+            });
+        });
+    });
+
+
+</script>
